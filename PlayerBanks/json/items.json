@@ -1,5 +1,14 @@
 [
-  "Pebble",
-  "Sticks",
-  "Leaves"
+  {
+    "name": "Pebbles",
+    "image": "images/pebbles.png"
+  },
+  {
+    "name": "Sticks",
+    "image": null
+  },
+  {
+    "name": "Leaves",
+    "image": null
+  }
 ]

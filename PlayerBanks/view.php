@@ -34,7 +34,12 @@
 							foreach($user->inventory as $item) {
 								echo "<span class='mr-4'>";
 								echo "<span class='badge badge-light mr-3'>$item->quantity</span>";
-								echo $item->item;
+								if($item->image) {
+									echo "<img src='$item->image' width=100px height=100px>";
+								}
+								else {
+									echo $item->name;
+								}
 								echo "</span>";
 							}
 						?>

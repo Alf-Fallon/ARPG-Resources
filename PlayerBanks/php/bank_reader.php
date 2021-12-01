@@ -66,18 +66,6 @@ function UpdateUserData($username, $balance, $newInv, $prev_user = null)
 	WriteBankDataToJSON();
 }
 
-function BuildInventory($items, $quantity)
-{
-	$inventory = [];
-	foreach($items as $index => $i) {
-		$item = new StdClass();
-		$item->item = $i;
-		$item->quantity = $quantity[$index];
-		$inventory[] = $item;
-	}
-	return $inventory;
-}
-
 function IsUsernameUnique($username, $prev_user = null)
 {
 	global $banks;

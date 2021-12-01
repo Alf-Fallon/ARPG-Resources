@@ -64,11 +64,11 @@
 								echo "<td><select class='custom-select' name='items[]'>";
 								foreach($items as $i)
 								{
-									if($i == $item->item) {
-										echo "<option value='$i' selected>$i</option>";
+									if($i->name == $item->name) {
+										echo "<option value='$i->name' selected>$i->name</option>";
 									}
 									else {
-										echo "<option value='$i'>$i</option>";
+										echo "<option value='$i->name'>$i->name</option>";
 									}
 								}
 								echo "</select></td>";
@@ -97,7 +97,7 @@
 				{
 					$username = $_POST['username'];
 					$balance = $_POST['balance'];
-					$items = isset($_POST['items']) ? $_POST['items'] : [];
+					$itemsArray = isset($_POST['items']) ? $_POST['items'] : [];
 					$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : [];
 
 					if(empty($username)) {
@@ -106,11 +106,11 @@
 					else if(!IsUsernameUnique($username, $_GET['user'])) {
 						echo "There is already a bank under this username.";
 					}
-					else if(count($items) > count(array_unique($items))) {
+					else if(count($itemsArray) > count(array_unique($itemsArray))) {
 						echo "There are duplicate items.";
 					}
 					else {
-						UpdateUserData($username, $balance, BuildInventory($items, $quantity), $_GET['user']);
+						UpdateUserData($username, $balance, BuildInventory($itemsArray, $quantity), $_GET['user']);
 						header("Location: view.php?user=$username");
 					}
 				}
@@ -139,7 +139,7 @@
 				tbl_data += "<td><select class='custom-select' name='items[]'>";
 				<?php 
 					foreach($items as $item) {
-						echo "tbl_data += \"<option value='$item'>$item</option>\";";
+						echo "tbl_data += \"<option value='$item->name'>$item->name</option>\";";
 					}
 				?>
 				tbl_data += "</select></td>";
