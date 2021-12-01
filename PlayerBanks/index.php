@@ -28,7 +28,14 @@
 						<th>Username</th>
 						<th>Balance</th>
 						<th># of Items</th>
-						<th></th>
+						<th>
+							<?php 
+								if($auth) 
+								{
+									echo "<a href='manage.php' class='btn btn-primary'>Add New Bank</a>";
+								}
+							?>
+						</th>
 					</tr>
 				</thead>
 				<tbody>

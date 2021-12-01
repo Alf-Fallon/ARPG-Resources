@@ -29,7 +29,7 @@
 
 			<span class="text-muted">Hello <?php echo $auth; ?>!</span>
 
-			<h4 class="my-4 text-center">Manage <?php echo $user->username; ?>'s Bank</h4>
+			<h4 class="my-4 text-center"><?php if($user) echo "Manage $user->username's Bank"; else echo "Create New Bank" ?></h4>
 
 			<form class="mx-auto" style="max-width: 500px;" method="post">
 
@@ -82,6 +82,11 @@
 
 				<button type="button" class="btn btn-primary" id="btnAddRow">Add Item</button>
 				<button type="submit" class="btn btn-primary" name="submit" id="submit">Save Changes</button>
+				<?php 
+					if($user) {
+						echo "<button type='submit' class='btn btn-danger' name='delete'>Delete Bank</button>";
+					}
+				?>
 				<a href="index.php" class="btn btn-danger">Cancel</a>
 
 			</form>
@@ -92,14 +97,32 @@
 				{
 					$username = $_POST['username'];
 					$balance = $_POST['balance'];
-					$items = $_POST['items'];
-					$quantity = $_POST['quantity'];
+					$items = isset($_POST['items']) ? $_POST['items'] : [];
+					$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : [];
 
-					if(count($items) > count(array_unique($items))) {
+					if(empty($username)) {
+						echo "Please enter a username.";
+					}
+					else if(!IsUsernameUnique($username, $_GET['user'])) {
+						echo "There is already a bank under this username.";
+					}
+					else if(count($items) > count(array_unique($items))) {
 						echo "There are duplicate items.";
 					}
 					else {
-						UpdateUserData($username, $balance, BuildInventory($items, $quantity));
+						UpdateUserData($username, $balance, BuildInventory($items, $quantity), $_GET['user']);
+						header("Location: view.php?user=$username");
+					}
+				}
+
+				if(isset($_POST['delete']))
+				{
+					if($user) {
+						DeleteUserData($_GET['user']);
+						header("Location: index.php");
+					}
+					else {
+						echo "There is no bank to delete.";
 					}
 				}
 
@@ -107,9 +130,9 @@
 
 			<script>
 			
-			$(".btnDelete").click(function() {
+			$("#inventory").on('click', '.btnDelete', function() {
 				$(this).closest('tr').remove();
-			})
+			});
 
 			$("#btnAddRow").click(function() {
 				var tbl_data = "<tr>";

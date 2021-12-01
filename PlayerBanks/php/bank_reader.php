@@ -7,6 +7,13 @@ function FetchBankDataFromJSON()
 	return $banks;
 }
 
+function WriteBankDataToJSON()
+{
+	global $banks;
+	$json_data = json_encode($banks);
+	file_put_contents('json/banks.json', $json_data);
+}
+
 function GetUserData($username = null)
 {
 	global $banks;
@@ -19,17 +26,29 @@ function GetUserData($username = null)
 		}
 	}
 	return false;
-
 }
 
-function UpdateUserData($username, $balance, $newInv)
+function DeleteUserData($username)
+{
+	global $banks;
+	foreach($banks as $index => $user) {
+		if($user->username == $username) {
+			unset($banks[$index]);
+		}
+	}
+	WriteBankDataToJSON();
+}
+
+function UpdateUserData($username, $balance, $newInv, $prev_user = null)
 {
 	global $banks;
 	$userFound = false;
+	$userToSearch = $prev_user ? $prev_user : $username;
 
 	foreach($banks as $user) {
-		if($user->username == $username)
+		if($user->username == $userToSearch)
 		{
+			$user->username = $username;
 			$user->balance = $balance;
 			$user->inventory = $newInv;
 			$userFound = true;
@@ -44,9 +63,7 @@ function UpdateUserData($username, $balance, $newInv)
 		$banks[] = $user;
 	}
 
-	$json_data = json_encode($banks);
-	file_put_contents('json/banks.json', $json_data);
-	header("Location: view.php?user=$username");
+	WriteBankDataToJSON();
 }
 
 function BuildInventory($items, $quantity)
@@ -59,6 +76,22 @@ function BuildInventory($items, $quantity)
 		$inventory[] = $item;
 	}
 	return $inventory;
+}
+
+function IsUsernameUnique($username, $prev_user = null)
+{
+	global $banks;
+	if($prev_user && $username == $prev_user) {
+		return true;
+	}
+	else {
+		if(array_search($username, array_column($banks, "username")) == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 function CountItems($items)
